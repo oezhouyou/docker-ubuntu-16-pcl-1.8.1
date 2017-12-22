@@ -1,8 +1,16 @@
 FROM ubuntu:16.04
 
-MAINTAINER Kenji Nomura <atatb23@gmail.com>
+MAINTAINER You Zhou <oezhouyou@gmail.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
+
+# Create a development user
+RUN useradd -ms /bin/bash dev && \
+    echo "dev:dev" | chpasswd
+
+# Setup home environment
+RUN chown -R dev.dev /home/dev
+RUN echo "dev ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
       make cmake build-essential git \
@@ -25,3 +33,8 @@ RUN \
     make clean
 
 RUN ldconfig
+
+# Define default command.
+CMD ["/bin/bash"]
+
+USER dev
